@@ -7,8 +7,9 @@ fileLocation = "Location to the rbxlx file"
 def mapStuff():
 	#region Map file
     mapData = open(fileLocation, 'rb').read()
-    mapData = scruber.replace_referents(mapData)
-    finalData = scruber.replace_script_guids(mapData)
+    if fileLocation.endswith(".rbxlx"): # Clean if RBXLX 
+        mapData = scruber.replace_referents(mapData)
+        finalData = scruber.replace_script_guids(mapData)
     #endregion
     return finalData
 
