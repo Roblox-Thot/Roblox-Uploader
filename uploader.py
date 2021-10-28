@@ -1,7 +1,7 @@
 import requests
 
 cookie = input("Account cookie: ")
-fileLocation = "Location to the rbxlx file"
+fileLocation = input("Location to the rbxlx file: ")
 
 def mapStuff():
 	#region Map file
