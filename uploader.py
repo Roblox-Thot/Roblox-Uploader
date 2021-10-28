@@ -1,7 +1,7 @@
 import requests
 
 cookie = input("Account cookie: ")
-fileLocation = input("Location to the map file: ")
+fileLocation = input("Location to the map file: ").replace("\"", "")
 
 def mapStuff():
 	#region Map file
