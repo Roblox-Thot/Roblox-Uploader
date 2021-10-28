@@ -1,5 +1,5 @@
 import requests
-import scruber
+#import scruber
 
 def uploadFile(fileLocation, cookie):
     """ Returns game as a JSON 
@@ -12,9 +12,9 @@ def uploadFile(fileLocation, cookie):
     def mapStuff():
         #region Map file
         mapData = open(fileLocation, 'rb').read()
-        if fileLocation.endswith(".rbxlx"): # Clean if RBXLX 
-            mapData = scruber.replace_referents(mapData)
-            finalData = scruber.replace_script_guids(mapData)
+        #if fileLocation.endswith(".rbxlx"): # Clean if RBXLX 
+        #    mapData = scruber.replace_referents(mapData)
+        #    finalData = scruber.replace_script_guids(mapData)
         #endregion
         return finalData
 
