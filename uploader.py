@@ -1,17 +1,17 @@
 import requests
 
 cookie = input("Account cookie: ")
-fileLocation = input("Location to the rbxlx file: ")
+fileLocation = input("Location to the map file: ")
 
 def mapStuff():
 	#region Map file
     mapData = open(fileLocation, 'rb').read()
-    if fileLocation.endswith(".rbxlx"): # Clean if RBXLX 
-        import scruber #not sure if doing this would work but i dont know why it wouldnt
-        mapData = scruber.replace_referents(mapData)
-        finalData = scruber.replace_script_guids(mapData)
+    #if fileLocation.endswith(".rbxlx"): # Clean if RBXLX 
+    #    import scruber #not sure if doing this would work but i dont know why it wouldnt
+    #    mapData = scruber.replace_referents(mapData)
+    #    finalData = scruber.replace_script_guids(mapData)
     #endregion
-    return finalData
+    return mapData
 
 def getXsrf(): #Get the Xsrf token bc roblox is a cunt
     xsrHeader = requests.post("https://auth.roblox.com/v2/login", headers={
