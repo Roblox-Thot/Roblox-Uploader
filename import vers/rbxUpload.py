@@ -16,7 +16,7 @@ def uploadFile(fileLocation, cookie):
         #    mapData = scruber.replace_referents(mapData)
         #    finalData = scruber.replace_script_guids(mapData)
         #endregion
-        return finalData
+        return mapData
 
     def getXsrf():
         xsrHeader = requests.post("https://auth.roblox.com/v2/login", headers={
