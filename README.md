@@ -1,5 +1,3 @@
-# Archiveing and remaking the whole thing as ["Roblox.Pie"](https://github.com/Roblox-Thot/Roblox.Pie)
-## ᴿᵒᵇˡᵒˣ.ᴾᶦᵉ ᵇᵉᶜᵃᵘˢᵉ ᴿᵒᵇˡᵒˣ.ᴾʸ ʷᵃˢ ᵗᵃᵏᵉⁿ 
 Upload Roblox files from python
 
 # Note:
