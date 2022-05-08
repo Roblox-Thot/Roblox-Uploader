@@ -1,15 +1,13 @@
-try:
+import requests
+try: 
     import re, secrets, uuid
     unblacklist = True
 except ImportError:
     print("[!] You need to install the following modules: re, secrets, uuid if you want to unblacklist")
     unblacklist = False
+#import scruber
 
-import requests
 
-
-cookie = input("Account cookie: ")
-fileLocation = input("Location to the map file: ").replace("\"", "")
 
 #region unblacklist
 def replace_referents(data):
@@ -41,48 +39,58 @@ def replace_script_guids(data):
     return data
 #endregion
 
-def mapStuff():
-	#region Map file
-    mapData = open(fileLocation, 'rb').read()
-    if fileLocation.endswith(".rbxlx") and unblacklist: # Clean if RBXLX 
-        #not sure if doing this would work but i dont know why it wouldnt
-       mapData = replace_referents(mapData)
-       mapData = replace_script_guids(mapData)
-    #endregion
-    return mapData
+def uploadFile(fileLocation, cookie):
+    """ Returns game as a JSON 
+    return {
+        "link": gameLink
+        "gameId": gameId,
+        "userId": userId
+    }
+    """
+    def mapStuff():
+        #region Map file
+        mapData = open(fileLocation, 'rb').read()
+        if fileLocation.endswith(".rbxlx") and unblacklist: # Clean if RBXLX and if you imported the required modules
+            mapData = replace_referents(mapData)
+            mapData = replace_script_guids(mapData)
+        #endregion
+        return mapData
 
-def getXsrf(): #Get the Xsrf token bc roblox is a cunt
-    xsrHeader = requests.post("https://auth.roblox.com/v2/login", headers={
-        "X-CSRF-TOKEN": ""
-    }, cookies={
-        '.ROBLOSECURITY': cookie
-    }).headers['x-csrf-token']
-    return xsrHeader
+    def getXsrf():
+        xsrHeader = requests.post("https://auth.roblox.com/v2/login", headers={
+            "X-CSRF-TOKEN": ""
+        }, cookies={
+            '.ROBLOSECURITY': cookie
+        }).headers['x-csrf-token']
+        return xsrHeader
 
-xsrf = getXsrf()
-userId = requests.get("https://users.roblox.com/v1/users/authenticated", headers={
+    xsrf = getXsrf()
+    userId = requests.get("https://users.roblox.com/v1/users/authenticated", headers={
+            'x-csrf-token': xsrf,
+            'User-Agent': 'Roblox/WinINet'
+        }, cookies={
+            '.ROBLOSECURITY': cookie
+        }).json()["id"]
+
+    gameId = requests.get("https://inventory.roblox.com/v2/users/" + str(userId) + "/inventory/9?limit=10&sortOrder=Asc", headers={
+            'x-csrf-token': xsrf,
+            'User-Agent': 'Roblox/WinINet'
+        }, cookies={
+            '.ROBLOSECURITY': cookie
+        }).json()["data"][0]["assetId"]
+
+    uploadRequest = requests.post("https://data.roblox.com/Data/Upload.ashx?assetid=" + str(gameId) + "&type=Place&name=ese&description=Sup&genreTypeId=1&ispublic=False",
+    headers={
+        'Content-Type': 'application/xml',
         'x-csrf-token': xsrf,
         'User-Agent': 'Roblox/WinINet'
-    }, cookies={
+    }, 
+    cookies={
         '.ROBLOSECURITY': cookie
-    }).json()["id"]
+    }, data = mapStuff())
 
-gameId = requests.get("https://inventory.roblox.com/v2/users/" + str(userId) + "/inventory/9?limit=10&sortOrder=Asc", headers={
-        'x-csrf-token': xsrf,
-        'User-Agent': 'Roblox/WinINet'
-    }, cookies={
-        '.ROBLOSECURITY': cookie
-    }).json()["data"][0]["assetId"]
-
-uploadRequest = requests.post("https://data.roblox.com/Data/Upload.ashx?assetid=" + str(gameId) + "&type=Place&name=ese&description=Sup&genreTypeId=1&ispublic=False",
-   headers={
-     'Content-Type': 'application/xml',
-     'x-csrf-token': xsrf,
-     'User-Agent': 'Roblox/WinINet'
-   }, 
-   cookies={
-       '.ROBLOSECURITY': cookie
-   }, data = mapStuff())
-
-print(f'uploaded to https://roblox.com/games/{str(gameId)}/')
-input('')
+    return {
+        "link": f'https://roblox.com/games/{str(gameId)}/',
+        "gameId": gameId,
+        "userId": userId
+    }
