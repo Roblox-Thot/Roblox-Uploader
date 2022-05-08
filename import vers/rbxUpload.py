@@ -1,5 +1,43 @@
 import requests
+try: 
+    import re, secrets, uuid
+    unblacklist = True
+except ImportError:
+    print("[!] You need to install the following modules: re, secrets, uuid if you want to unblacklist")
+    unblacklist = False
 #import scruber
+
+
+
+#region unblacklist
+def replace_referents(data):
+    cache = {}
+    def _replace_ref(match):
+        ref = match.group(1)
+        if not ref in cache:
+            cache[ref] = ("RBX" + secrets.token_hex(16).upper()).encode()
+        return cache[ref]
+    data = re.sub(
+        b"(RBX[A-Z0-9]{32})",
+        _replace_ref,
+        data
+    )
+    return data
+
+def replace_script_guids(data):
+    cache = {}
+    def _replace_guid(match):
+        guid = match.group(1)
+        if not guid in cache:
+            cache[guid] = ("{" + str(uuid.uuid4()).upper() + "}").encode()
+        return cache[guid]
+    data = re.sub(
+        b"(\{[A-Z0-9]{8}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{12}\})",
+        _replace_guid,
+        data
+    )
+    return data
+#endregion
 
 def uploadFile(fileLocation, cookie):
     """ Returns game as a JSON 
@@ -12,9 +50,9 @@ def uploadFile(fileLocation, cookie):
     def mapStuff():
         #region Map file
         mapData = open(fileLocation, 'rb').read()
-        #if fileLocation.endswith(".rbxlx"): # Clean if RBXLX 
-        #    mapData = scruber.replace_referents(mapData)
-        #    finalData = scruber.replace_script_guids(mapData)
+        if fileLocation.endswith(".rbxlx") and unblacklist: # Clean if RBXLX and if you imported the required modules
+            mapData = replace_referents(mapData)
+            mapData = replace_script_guids(mapData)
         #endregion
         return mapData
 
