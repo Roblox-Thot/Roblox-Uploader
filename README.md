@@ -5,5 +5,3 @@ The [rbxUpload.py](https://github.com/Roblox-Thot/Roblox-Uploader/blob/main/impo
 
 # Requires:
 Any map file type
-<!--[scrub.py](https://github.com/h0nde/roblox-game-scrubber) in the same folder
-(only needed for uploading .rbxlx maps)-->
